@@ -1,0 +1,59 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mutithread;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+
+/**
+ *
+ * @author Administrator
+ */
+public class Browser extends Thread {
+
+    private JTextField url;
+    private JEditorPane showpage;
+    private JTextPane showthread;
+    private String threadname;
+
+    public Browser(JTextField url, JEditorPane showpage, JTextPane showthread, String threadname) {
+        this.url = url;
+        this.showpage = showpage;
+        this.showthread = showthread;
+        this.threadname = threadname;
+    }
+
+    @Override
+    public void run(){
+        String txt = "";
+        txt += threadname + " : Start";
+        showthread.setText(txt);
+        try {
+
+            showpage.setPage(url.getText());
+            URL obj = new URL(url.getText());
+            txt += "\n " + threadname + " : Get page URL = " + url;
+            URLConnection conn = obj.openConnection();
+            Map<String, List<String>> map = conn.getHeaderFields();
+            txt += "\n " + threadname + " : Printing Response Header...";
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                txt += "\n " + threadname + " : " + entry.getKey() + ", " + entry.getValue();
+            }
+            showthread.setText(txt);
+
+        } catch (IOException ex) {
+            Logger.getLogger(Browser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        txt += "\n " + threadname + " : Stop";
+        showthread.setText(txt);
+    }
+}
